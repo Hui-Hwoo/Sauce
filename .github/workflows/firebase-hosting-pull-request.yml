@@ -29,7 +29,7 @@ jobs:
 
       - name: 📥 Download deps
         working-directory: functions
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: 🚀 Deploy
         run: npx firebase-tools deploy --token "$FIREBASE_TOKEN" --only functions
