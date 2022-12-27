@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import RecipeList from "./components/RecipeList";
-import FirestoreService from "./firebase/FirestoreService";
+// import FirestoreService from "../firebase/FirestoreService";
 import FirebaseAuthService from "./firebase/FirebaseAuthService";
+import RestService from "./firebase/RestService";
 import Filter from "./components/Filter";
 import RecipeForm from "./components/RecipeForm";
 import LoadMore from "./components/LoadMore";
@@ -18,81 +19,52 @@ const App = () => {
 
     const [category, setCategory] = useState("");
     const [order, setOrder] = useState("publishDateDesc");
-    const [perPage, setPerPage] = useState(1);
-    const [cursorId, setCursorId] = useState("");
+    const [perPage, setPerPage] = useState(3);
     const [update, setUpdate] = useState(false);
+    const [totalPages, setTotalPages] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         FirebaseAuthService.subscribeToAuthChanges(setUser);
     }, []);
 
     useEffect(() => {
-        fetchRecipes(cursorId);
+        setPerPage(3);
+        setCurrentPage(1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cursorId]);
+    }, [category]);
 
     useEffect(() => {
         setUpdate(false);
-        setCursorId("");
         setCurrentRecipe("");
-        fetchRecipes("");
+        fetchRecipes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [perPage, category, order, update]);
+    }, [perPage, category, order, update, currentPage]);
 
-    const fetchRecipes = async (lastRecipe) => {
-        const queries = [];
-        if (category) {
-            queries.push({
-                field: "category",
-                condition: "==",
-                value: category,
-            });
-        }
-
-        if (!user) {
-            queries.push({
-                field: "isPublished",
-                condition: "==",
-                value: true,
-            });
-        }
-
-        const orderByField = "publishDate";
-        let orderByDirection;
-
-        if (order) {
-            switch (order) {
-                case "publishDateAsc":
-                    orderByDirection = "asc";
-                    break;
-                case "publishDateDesc":
-                    orderByDirection = "desc";
-                    break;
-                default:
-                    break;
-            }
-        }
-
+    const fetchRecipes = async () => {
         try {
-            const response = await FirestoreService.readDocuments({
-                col: "recipes",
-                queries: queries,
-                orderByField: orderByField,
-                orderByDirection: orderByDirection,
+            const response = await RestService.readDocuments("recipes", {
+                category: category,
+                order: order === "publishDateAsc" ? "asc" : "desc",
                 perPage: perPage,
-                cursorId: lastRecipe,
+                pageNumber: currentPage,
+                isPublished: !user ? true : false,
             });
-            const responseData = response.docs.map((recipeDoc) => {
-                const id = recipeDoc.id;
-                const data = recipeDoc.data();
-                data.publishDate = new Date(data.publishDate.seconds * 1000);
-                return { ...data, id };
-            });
+
             let fetchedRecipes = [];
-            if (lastRecipe) {
-                fetchedRecipes = [...recipes, ...responseData];
-            } else {
-                fetchedRecipes = [...responseData];
+
+            if (response && response.documents) {
+                setTotalPages(Math.ceil(response.recipeCount / perPage));
+
+                if (response.documents.length === 0 && currentPage !== 1) {
+                    setCurrentPage(currentPage - 1);
+                }
+
+                fetchedRecipes = response.documents;
+                fetchedRecipes.forEach((recipe) => {
+                    const unixPublishDateTime = recipe.publishDate;
+                    recipe.publishDate = new Date(unixPublishDateTime * 1000);
+                });
             }
             setRecipes(fetchedRecipes);
         } catch (error) {
@@ -146,10 +118,11 @@ const App = () => {
                     setCurrentRecipe={setCurrentRecipe}
                 ></RecipeList>
                 <LoadMore
-                    recipes={recipes}
                     perPage={perPage}
                     setPerPage={setPerPage}
-                    setCursorId={setCursorId}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                    totalPages={totalPages}
                 ></LoadMore>
                 <RecipeForm
                     currentRecipe={currentRecipe}

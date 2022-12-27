@@ -4,7 +4,7 @@ const RecipeList = (props) => {
     const { recipes, setCurrentRecipe, user } = props;
     const isLoading = false;
 
-    const lookupCategoryLabel = (categoryKey) => {
+    const formatCategory = (categoryKey) => {
         const categories = {
             breadsSandwichesAndPizza: "Breads, Sandwiches, and Pizza",
             eggsAndBreakfast: "Eggs & Breakfast",
@@ -84,7 +84,7 @@ const RecipeList = (props) => {
                                     </div>
                                     <div className="recipe-field">
                                         Category:{" "}
-                                        {lookupCategoryLabel(recipe.category)}
+                                        {formatCategory(recipe.category)}
                                     </div>
                                     <div className="recipe-field">
                                         Publish Date:{" "}

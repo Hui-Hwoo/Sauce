@@ -1,4 +1,4 @@
-import firebaseApp from "./FirebaseConfig";
+import FirebaseService from "./FirebaseConfig";
 import {
     addDoc,
     doc,
@@ -14,7 +14,7 @@ import {
     deleteDoc,
 } from "firebase/firestore/lite";
 
-const firestore = firebaseApp.firestore;
+const firestore = FirebaseService.firestore;
 
 const createDocument = (col, doc) => {
     try {

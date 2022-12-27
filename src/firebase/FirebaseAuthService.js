@@ -6,9 +6,9 @@ import {
     GoogleAuthProvider,
     onAuthStateChanged,
 } from "firebase/auth";
-import firebase from "./FirebaseConfig";
+import FirebaseService from "./FirebaseConfig";
 
-const auth = firebase.auth;
+const auth = FirebaseService.auth;
 
 const registerUser = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password);

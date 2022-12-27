@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import FirestoreService from "../firebase/FirestoreService";
+// import FirestoreService from "../firebase/FirestoreService";
+import RestService from "../firebase/RestService";
 import ImageUpload from "./imageUpload";
 
 const RecipeForm = (props) => {
@@ -36,10 +37,15 @@ const RecipeForm = (props) => {
 
     const addRecipe = async (newRecipe) => {
         try {
-            const response = await FirestoreService.createDocument(
+            // const response = await FirestoreService.createDocument(
+            //     "recipes",
+            //     newRecipe
+            // );
+            const response = await RestService.createDocument(
                 "recipes",
                 newRecipe
             );
+
             alert(`successfully create a new recipe with ID ${response.id}!`);
             setCurrentRecipe(null);
             setUpdate(true);
@@ -50,7 +56,12 @@ const RecipeForm = (props) => {
 
     const updateRecipe = async (newRecipe, recipeId) => {
         try {
-            await FirestoreService.updateDocument(
+            // await FirestoreService.updateDocument(
+            //     "recipes",
+            //     recipeId,
+            //     newRecipe
+            // );
+            await RestService.updateDocument(
                 "recipes",
                 recipeId,
                 newRecipe
@@ -73,7 +84,8 @@ const RecipeForm = (props) => {
 
         if (deleteConfirmtion) {
             try {
-                await FirestoreService.deleteDocument("recipes", recipeId);
+                // await FirestoreService.deleteDocument("recipes", recipeId);
+                await RestService.deleteDocument("recipes", recipeId);
                 setCurrentRecipe(null);
                 window.scrollTo(0, 0);
                 alert("Successfully deleted the recipe");
@@ -124,7 +136,7 @@ const RecipeForm = (props) => {
             name,
             category,
             directions,
-            publishDate: new Date(publishDate),
+            publishDate: new Date(publishDate).getTime() / 1000,
             isPublished,
             ingredients,
             imageUrl,

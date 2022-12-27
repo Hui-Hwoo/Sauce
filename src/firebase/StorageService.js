@@ -1,4 +1,4 @@
-import firebaseApp from "./FirebaseConfig";
+import FirebaseService from "./FirebaseConfig";
 import {
     ref,
     uploadBytesResumable,
@@ -6,7 +6,7 @@ import {
     deleteObject,
 } from "firebase/storage";
 
-const storage = firebaseApp.storage;
+const storage = FirebaseService.storage;
 
 const uploadFile = (file, fullFilePath, progressCallback) => {
     const uploadRef = ref(storage, fullFilePath);

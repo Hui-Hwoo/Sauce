@@ -21,10 +21,10 @@ const auth = getAuth(app);
 const storage = getStorage(app);
 const firestore = getFirestore(app);
 
-const firebaseApp = {
+const FirebaseService = {
     auth, 
     storage,
     firestore
 }
 
-export default firebaseApp;
+export default FirebaseService;
