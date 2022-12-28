@@ -14,6 +14,7 @@ const SignupForm = (props) => {
                 password
             );
             props.setUser(response.user);
+            console.log("successful sign up")
         } catch (error) {
             alert(error.message);
         }
@@ -33,7 +34,7 @@ const SignupForm = (props) => {
                 placeholder="password"
                 onInput={(e) => setPassword(e.target.value)}
             />
-            <button type="button"> sign up </button>
+            <button type="submit"> sign up </button>
         </form>
     );
 };

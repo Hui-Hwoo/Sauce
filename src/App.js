@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import RecipeList from "./components/RecipeList";
-// import FirestoreService from "../firebase/FirestoreService";
 import FirebaseAuthService from "./firebase/FirebaseAuthService";
 import RestService from "./firebase/RestService";
 import Filter from "./components/Filter";
@@ -21,7 +20,7 @@ const App = () => {
     const [order, setOrder] = useState("publishDateDesc");
     const [perPage, setPerPage] = useState(3);
     const [update, setUpdate] = useState(false);
-    const [totalPages, setTotalPages] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
@@ -29,37 +28,38 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        setPerPage(3);
-        setCurrentPage(1);
+        fetchRecipes(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [category]);
+    }, []);
 
     useEffect(() => {
-        setUpdate(false);
-        setCurrentRecipe("");
         fetchRecipes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [perPage, category, order, update, currentPage]);
+    }, [order, currentPage]);
 
-    const fetchRecipes = async () => {
+    useEffect(() => {
+        if (update) {
+            setUpdate(false);
+            setCurrentRecipe("");
+        }
+        fetchRecipes(true);
+        setCurrentPage(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [perPage, category, update]);
+
+    const fetchRecipes = async (restart = false) => {
         try {
             const response = await RestService.readDocuments("recipes", {
                 category: category,
                 order: order === "publishDateAsc" ? "asc" : "desc",
                 perPage: perPage,
-                pageNumber: currentPage,
-                isPublished: !user ? true : false,
+                pageNumber: restart ? 1 : currentPage,
+                isPublished: user === null ? true : false,
             });
-
             let fetchedRecipes = [];
 
             if (response && response.documents) {
                 setTotalPages(Math.ceil(response.recipeCount / perPage));
-
-                if (response.documents.length === 0 && currentPage !== 1) {
-                    setCurrentPage(currentPage - 1);
-                }
-
                 fetchedRecipes = response.documents;
                 fetchedRecipes.forEach((recipe) => {
                     const unixPublishDateTime = recipe.publishDate;
@@ -79,7 +79,7 @@ const App = () => {
                 <h1 className="title">Firebase Recipes</h1>
                 {!user &&
                     (loginMode ? (
-                        <LoginForm existingUser={user}></LoginForm>
+                        <LoginForm setUser={setUser}></LoginForm>
                     ) : (
                         <SignupForm></SignupForm>
                     ))}
@@ -98,7 +98,8 @@ const App = () => {
                     <button
                         type="button"
                         onClick={() => {
-                            console.log("log out");
+                            FirebaseAuthService.logoutUser();
+                            setUser(null);
                         }}
                     >
                         Log out

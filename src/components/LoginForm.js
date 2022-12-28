@@ -14,6 +14,8 @@ const LoginForm = (props) => {
                 password
             );
             props.setUser(response.user);
+            console.log("successfully logged up");
+            console.log(response.user);
         } catch (error) {
             alert(error.message);
         }
@@ -23,6 +25,26 @@ const LoginForm = (props) => {
         event.preventDefault();
         try {
             const response = await FirebaseAuthService.loginWithGoogle();
+            props.setUser(response.user);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const loginWithFacebookHandler = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await FirebaseAuthService.loginWithFacebook();
+            props.setUser(response.user);
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+    const loginWithGitHubHandler = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await FirebaseAuthService.loginWithGitHub();
             props.setUser(response.user);
         } catch (error) {
             alert(error.message);
@@ -55,19 +77,3 @@ const LoginForm = (props) => {
 };
 
 export default LoginForm;
-
-// {!!user ? <h1>{`Welcome ${user.email}`}</h1> : <h1>Please Login</h1>}
-//             {!user && (
-//                 <div>
-//                     {loginMode ? (
-//                         <LoginForm setUser={setUser} />
-//                     ) : (
-//                         <SignupForm setUser={setUser} />
-//                     )}
-//                     <br />
-//                     <button type="button" onClick={changeMode}>
-//                         {loginMode ? "Swith to signup" : "Swith to login"}
-//                     </button>
-//                 </div>
-//             )}
-//             {user && <button onClick={FirebaseAuthService.logoutUser}>Logout</button>}
