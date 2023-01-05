@@ -135,8 +135,7 @@ const SauceForm = (props) => {
             sour: taste["sour"],
             publishDate: new Date(publishDate).getTime() / 1000,
             isPublished,
-            imageUrl,
-            creator: user.uid
+            imageUrl
         };
 
         if (currentSauce) {
@@ -201,7 +200,7 @@ const SauceForm = (props) => {
                                             <InputGroup className="mb-3">
                                                 <Form.Control
                                                     placeholder="Sauce name"
-                                                    value={(!hasAccess && !(currentSauce?.isPublished?true:false))?"Secret Sauce":title}
+                                                    value={title}
                                                     aria-label="Title"
                                                     aria-describedby="title-content"
                                                     onChange={(e) => {
@@ -242,7 +241,7 @@ const SauceForm = (props) => {
                                                     placeholder="Description of the sauce"
                                                     as="textarea"
                                                     aria-label="With textarea"
-                                                    value={(!hasAccess && !(currentSauce?.isPublished?true:false))?"Secret Sauce, get more details after it's published":description}
+                                                    value={description}
                                                     onChange={(e) => {
                                                         setDescription(
                                                             e.target.value

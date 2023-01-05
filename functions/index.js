@@ -14,7 +14,7 @@ const RestAPI = require("./RestAPI");
 exports.api = functions.https.onRequest(RestAPI);
 
 exports.onCreateRecipe = functions.firestore
-    .document("recipes/{recipeId}")
+    .document("sauce/{recipeId}")
     .onCreate(async (snapshot) => {
         const countDocRef = firestore.collection("recipeCounts").doc("all");
         const countDoc = await countDocRef.get();

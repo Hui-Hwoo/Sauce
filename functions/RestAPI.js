@@ -15,69 +15,66 @@ app.use(bodyParser.json());
 
 // ~~ RESTFUL CRUD WEB API ENDPOINTS ~~
 
-app.get("/recipes", async (request, response) => {
+app.get("/sauce", async (request, response) => {
     const authorizationHeader = request.headers["authorization"];
 
-    const { category, order, pageNumber, perPage } = request.query;
+    const { state, taste } = request.query;
 
-    let isAuth = false;
-    let collectionRef = firestore.collection("recipes");
+    let userId = "";
+    let collectionRef = firestore.collection("sauce");
 
     try {
-        await Utilities.authorizeUser(authorizationHeader, auth);
-        isAuth = true;
+        const userInfo = await Utilities.authorizeUser(
+            authorizationHeader,
+            auth
+        );
+        userId = userInfo.uid;
+        // response.status(202).send(userId);
+        // return;
     } catch (error) {
-        collectionRef = collectionRef.where("isPublished", "==", true);
+        // continue
     }
 
-    if (category) {
-        collectionRef = collectionRef.where("category", "==", category);
+    if (state) {
+        const stateList = ["liquid", "solid"];
+        collectionRef = collectionRef.where(
+            "state",
+            "==",
+            stateList[parseInt(state)]
+        );
     }
 
-    collectionRef = collectionRef.orderBy("publishDate", order);
-
-    if (perPage) {
-        collectionRef = collectionRef.limit(Number(perPage));
-    }
-
-    if (pageNumber > 0 && perPage) {
-        const offset = (pageNumber - 1) * perPage;
-        collectionRef = collectionRef.offset(offset);
-    }
-
-    let recipeCount = 0;
-    let countDocRef;
-
-    if (isAuth) {
-        countDocRef = firestore.collection("recipeCounts").doc("all");
-    } else {
-        countDocRef = firestore.collection("recipeCounts").doc("published");
+    if (taste) {
+        const tasteList = ["salty", "hot", "sweet", "sour"];
+        for (let i in taste) {
+            collectionRef = collectionRef.where(
+                tasteList[parseInt(taste[i])],
+                ">",
+                0
+            );
+        }
     }
 
     try {
-        const countDoc = await countDocRef.get();
-
-        if (countDoc.exists) {
-            const countDocData = countDoc.data();
-            if (countDocData) {
-                recipeCount = countDocData.count;
-            }
-        }
-
         const firestoreResponse = await collectionRef.get();
 
-        const fetchedRecipes = firestoreResponse.docs.map((recipe) => {
-            const id = recipe.id;
-            const data = recipe.data();
+        const fetchedSauce = firestoreResponse.docs.map((sauce) => {
+            const id = sauce.id;
+            const data = sauce.data();
             data.publishDate = data.publishDate._seconds;
+
+            if ((!data.isPublished) && (userId !== data.creator)) {
+                data.title = "Secret Sauce";
+                data.description =
+                    "Secret Sauce, get more details after it's published";
+                data.imageUrl = "";
+            }
             return { ...data, id };
         });
 
         const payload = {
-            recipeCount,
-            documents: fetchedRecipes,
+            documents: fetchedSauce,
         };
-
         response.status(200).send(payload);
     } catch (error) {
         response.status(400).send(error.message);
@@ -92,15 +89,17 @@ app.post("/sauce", async (request, response) => {
         return;
     }
 
+    var creator = "";
     try {
-        await Utilities.authorizeUser(authorizationHeader, auth);
+        const userInfo = await Utilities.authorizeUser(authorizationHeader, auth);
+        creator = userInfo.uid;
     } catch (error) {
-        response.status(401).send(error.message);
+        response.status(403).send(error.message);
         return;
     }
 
     const newSauce = request.body;
-    const missingFields = Utilities.validateRecipePostPut(newSauce);
+    const missingFields = Utilities.validateSaucePostPut(newSauce);
 
     if (missingFields) {
         response
@@ -112,21 +111,21 @@ app.post("/sauce", async (request, response) => {
     }
 
     try {
-        const recipe = Utilities.sanitizeRecipePostPut(newSauce);
+        const sauce = Utilities.sanitizeSaucePostPut(newSauce);
 
         const firestoreResponse = await firestore
             .collection("sauce")
-            .add(recipe);
+            .add({...sauce, creator});
 
-        const recipeId = firestoreResponse.id;
+        const sauceId = firestoreResponse.id;
 
-        response.status(201).send({ id: recipeId });
+        response.status(201).send({ id: sauceId });
     } catch (error) {
         response.status(400).send(error.message);
     }
 });
 
-app.put("/recipes/:id", async (request, response) => {
+app.put("/sauce/:id", async (request, response) => {
     const authorizationHeader = request.headers["authorization"];
 
     if (!authorizationHeader) {
@@ -134,16 +133,18 @@ app.put("/recipes/:id", async (request, response) => {
         return;
     }
 
+    var creator = "";
     try {
-        await Utilities.authorizeUser(authorizationHeader, auth);
+        const userInfo= await Utilities.authorizeUser(authorizationHeader, auth);
+        creator = userInfo.uid;
     } catch (error) {
         response.status(401).send(error.message);
         return;
     }
 
     const id = request.params.id;
-    const newRecipe = request.body;
-    const missingFields = Utilities.validateRecipePostPut(newRecipe);
+    const newSauce = request.body;
+    const missingFields = Utilities.validateSaucePostPut(newSauce);
 
     if (missingFields) {
         response
@@ -155,15 +156,15 @@ app.put("/recipes/:id", async (request, response) => {
     }
 
     try {
-        const recipe = Utilities.sanitizeRecipePostPut(newRecipe);
-        await firestore.collection("recipes").doc(id).set(recipe);
+        const sauce = Utilities.sanitizeSaucePostPut(newSauce);
+        await firestore.collection("sauce").doc(id).set({...sauce, creator});
         response.status(200).send({ id });
     } catch (error) {
         response.status(400).send(error.message);
     }
 });
 
-app.delete("/recipes/:id", async (request, response) => {
+app.delete("/sauce/:id", async (request, response) => {
     const authorizationHeader = request.headers["authorization"];
 
     if (!authorizationHeader) {
@@ -179,8 +180,8 @@ app.delete("/recipes/:id", async (request, response) => {
 
     try {
         const id = request.params.id;
-        await firestore.collection("recipes").doc(id).delete();
-        response.status(200).send();
+        await firestore.collection("sauce").doc(id).delete();
+        response.status(200).send("successfully deleted");
     } catch (error) {
         response.status(400).send(error.message);
     }

@@ -12,7 +12,7 @@ const authorizeUser = async (authorizationHeader, firebaseAuth) => {
     }
 };
 
-const validateRecipePostPut = (newSauce) => {
+const validateSaucePostPut = (newSauce) => {
     let missingFields = "";
 
     if (!newSauce) {
@@ -32,7 +32,12 @@ const validateRecipePostPut = (newSauce) => {
         missingFields += "state, ";
     }
 
-    if(newSauce.salty === 0 && newSauce.hot === 0 && newSauce.sweet === 0 && newSauce.sour ===0){
+    if (
+        newSauce.salty === 0 &&
+        newSauce.hot === 0 &&
+        newSauce.sweet === 0 &&
+        newSauce.sour === 0
+    ) {
         missingFields += "taste, ";
     }
 
@@ -48,14 +53,14 @@ const validateRecipePostPut = (newSauce) => {
         missingFields += "imageUrl, ";
     }
 
-    if(!newSauce.creator) {
-        missingFields += "creator Info";
-    }
+    // if (!newSauce.creator) {
+    //     missingFields += "creator Info";
+    // }
 
     return missingFields;
 };
 
-const sanitizeRecipePostPut = (newSauce) => {
+const sanitizeSaucePostPut = (newSauce) => {
     const sauce = {};
 
     sauce.title = newSauce.title;
@@ -67,15 +72,16 @@ const sanitizeRecipePostPut = (newSauce) => {
     sauce.sour = newSauce.sour;
     sauce.publishDate = new Date(newSauce.publishDate * 1000);
     sauce.isPublished = newSauce.isPublished;
-    sauce.ingredients = newSauce.ingredients;
     sauce.imageUrl = newSauce.imageUrl;
-    sauce.creator = newSauce.creator;
+    // if (sauce.creator) {
+    //     sauce.creator = newSauce.creator;
+    // }
 
     return sauce;
 };
 
 module.exports = {
     authorizeUser,
-    validateRecipePostPut,
-    sanitizeRecipePostPut,
+    validateSaucePostPut,
+    sanitizeSaucePostPut,
 };
