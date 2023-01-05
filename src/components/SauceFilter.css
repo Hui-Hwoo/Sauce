@@ -1,0 +1,122 @@
+.personalMode {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.homeMode {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.selector {
+    padding-left: 1px !important;
+    padding-right: 0px !important;
+    width: 100%;
+    /* font-family: "Andika", sans-serif; */
+    font-family: "Rock Salt", cursive !important;
+    font-weight: bold;
+}
+
+.category {
+    font-weight: bold;
+    font-size: 18px !important;
+    font-family: "Rock Salt", cursive;
+    color: white;
+    /* -webkit-text-stroke-color: rgb(0, 0, 0);
+    -webkit-text-stroke-width: 2px; */
+}
+
+@media screen and (max-width: 481px) {
+    .selector {
+        display: inline-block;
+        width: auto;
+    }
+}
+
+.TAll {
+    color: #ffffff !important;
+    background-color: #000000 !important;
+}
+
+.TAll-checked {
+    color: #ffffff !important;
+    background-color: #000000 !important;
+}
+
+.salty {
+    color: #3f83fe !important;
+    background-color: #f8f9fa !important;
+}
+
+.salty-checked {
+    color: #ffffff !important;
+    background-color: #3f83fe !important;
+}
+
+.hot {
+    color: #f44436 !important;
+    background-color: #f8f9fa !important;
+}
+
+.hot-checked {
+    color: #ffffff !important;
+    background-color: #f44436 !important;
+}
+
+.sweet {
+    color: #f9c10a !important;
+    background-color: #f8f9fa !important;
+}
+
+.sweet-checked {
+    color: #ffffff !important;
+    background-color: #f9c10a !important;
+}
+
+.sour {
+    color: #8bc34a !important;
+    background-color: #f8f9fa !important;
+}
+
+.sour-checked {
+    color: #ffffff !important;
+    background-color: #8bc34a !important;
+}
+
+.SAll {
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    /* border-color: #000000 !important; */
+}
+
+.SAll-checked {
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    /* border-color: #000000 !important; */
+}
+
+.liquid {
+    color: #3f83fe !important;
+    background-color: #f8f9fa !important;
+}
+
+.liquid-checked {
+    color: #ffffff !important;
+    background-color: #3f83fe !important;
+}
+
+.solid {
+    color: #f9c10a !important;
+    background-color: #f8f9fa !important;
+}
+
+.solid-checked {
+    color: #ffffff !important;
+    background-color: #f9c10a !important;
+}
+
+/* yellow: #f9c10a red #f44436  green #8bc34a  blue dark #3f83fe light #50d2f3 ##2196f3
+#ced4da
+
+blue #2E7CD1
+sdvfds */

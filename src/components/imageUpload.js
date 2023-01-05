@@ -1,23 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import ProgressBar from "react-bootstrap/ProgressBar";
 import { v4 as uuidv4 } from "uuid";
 import StorageService from "../firebase/StorageService";
+import "./imageUpload.css";
 
 const ImageUpload = (props) => {
-    const { basePath, URL, uploadImage, cancelImage } = props;
-    const [imageUrl, setImageUrl] = useState("");
+    const { imageUrl, setImageUrl, hasAccess, isPublished } = props;
     const [progress, setProgress] = useState(-1);
 
     const imageRef = useRef();
 
     useEffect(() => {
-        if (URL) {
-            setImageUrl(URL);
-        } else {
+        if (!imageUrl) {
             setProgress(-1);
-            setImageUrl("");
             imageRef.current.value = null;
         }
-    }, [URL]);
+    }, [imageUrl]);
 
     const uploadHandler = async (event) => {
         const files = event.target.files;
@@ -32,11 +33,10 @@ const ImageUpload = (props) => {
             const generatedId = uuidv4();
             const downloadUrl = await StorageService.uploadFile(
                 file,
-                `${basePath}/${generatedId}`,
+                `userSauce/${generatedId}`,
                 setProgress
             );
             setImageUrl(downloadUrl);
-            uploadImage(downloadUrl);
         } catch (error) {
             setProgress(-1);
             imageRef.current.value = null;
@@ -50,35 +50,53 @@ const ImageUpload = (props) => {
         imageRef.current.value = null;
         setImageUrl("");
         setProgress(-1);
-        cancelImage();
     };
 
     return (
-        <div className="image-upload-preview-container">
-            <input
-                type="file"
-                accept="image/*"
-                onChange={uploadHandler}
-                ref={imageRef}
-                hidden={progress > -1 || imageUrl}
-            ></input>
-            {!imageUrl && progress > -1 && (
-                <div>
-                    <label htmlFor="file">Upload Progress:</label>
-                    <progress id="file" value={progress} max="100">
-                        {progress}%
-                    </progress>
-                    <span>{progress}%</span>
-                </div>
-            )}
-            {imageUrl && (
-                <div className="image-preview">
-                    {" "}
-                    <img src={imageUrl} alt={imageUrl} className="image"></img>
-                    <button type="submit" onClick={cancelHandler} className="primary-button">Cancel</button>
-                </div>
-            )}
-        </div>
+        <Card className="text-center">
+            <Card.Img
+                variant="top"
+                src={
+                    imageUrl ||
+                    "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/forkD.svg?alt=media&token=6d49ab4f-c294-4ccf-9586-b9d3425b4384"
+                }
+            />
+            <Card.Body>
+                <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Control
+                        type="file"
+                        onChange={uploadHandler}
+                        ref={imageRef}
+                        hidden={!hasAccess || progress > -1 || imageUrl}
+                    />
+                </Form.Group>
+
+                {hasAccess && !imageUrl && progress > -1 && (
+                    <div>
+                        <label htmlFor="file">Progress:</label>
+                        <ProgressBar
+                            variant="warning"
+                            animated
+                            now={progress}
+                            label={`${progress}%`}
+                        />
+                    </div>
+                )}
+                {hasAccess && imageUrl && (
+                    <Button variant="secondary" onClick={cancelHandler}>
+                        Cancel
+                    </Button>
+                )}
+                {!hasAccess && (
+                    <Button
+                        variant={isPublished ? "warning" : "danger"}
+                        // disabled="true"
+                    >
+                        {isPublished ? "Published" : "Unpublished"}
+                    </Button>
+                )}
+            </Card.Body>
+        </Card>
     );
 };
 

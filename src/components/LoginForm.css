@@ -1,0 +1,103 @@
+.loginIcon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 3px;
+    margin-bottom: 5px;
+}
+
+#otherLoginWay {
+    margin-top: 0px;
+    margin-bottom: 16px;
+}
+
+#otherLoginWay img {
+    width: 25px;
+    height: 25px;
+    margin-right: 3px;
+    margin-bottom: 5px;
+}
+
+.Log-github {
+    background-color: white;
+    border-color: black;
+    border-radius: 7px;
+    margin-right: 10px;
+}
+
+.Log-github:hover {
+    background-color: black;
+    color: white;
+}
+
+.Log-google {
+    background-color: white;
+    border-color: #4286f4;
+    color: #4286f4;
+    border-radius: 7px;
+    margin-right: 10px;
+}
+
+.Log-google:hover {
+    background-color: #4286f4;
+    color: white;
+}
+
+.Log-facebook {
+    background-color: white;
+    color: #3c5999;
+    border-color: #3c5999;
+    border-radius: 7px;
+    margin-right: 7px;
+}
+
+.Log-facebook:hover {
+    background-color: #3c5999;
+    color: white;
+}
+
+.modal-content {
+    display: block !important;
+    padding: 1rem;
+    padding-top: 0%;
+    border: 0px !important;
+}
+
+.switch-btn {
+    background-color: white;
+    border-radius: 7px;
+    color: black;
+}
+
+.switch-btn:hover {
+    background-color: #f9c10a;
+}
+
+.seperator1 {
+    display: inline-block;
+}
+
+.seperator2 {
+    display: inline-block;
+}
+
+@media screen and (max-width: 492px) {
+    .seperator2 {
+        display: block;
+        margin-left: 10px;
+    }
+    .facebook {
+        margin-left: 81px;
+    }
+}
+
+@media screen and (max-width: 372px) {
+    .seperator1 {
+        display: block;
+        margin-left: 10px;
+    }
+    .github {
+        margin-left: 81px;
+    }
+}
+

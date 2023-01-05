@@ -1,0 +1,21 @@
+.normal {
+    display: block;
+    object-fit: cover;
+    border-radius: 0px;
+    transition: opacity 100ms ease-out 0s;
+    visibility: visible;
+}
+
+.tasteIcon {
+    display: block;
+    object-fit: cover;
+    border-radius: 0px;
+    transition: opacity 100ms ease-out 0s;
+    visibility: visible;
+}
+
+@media screen and (max-width: 481px) {
+    .tasteIcon {
+        visibility: collapse;
+    }
+}

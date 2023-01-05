@@ -1,0 +1,47 @@
+.sauceItem {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.sauceItem:hover {
+    width: 105%;
+}
+
+.card-progress {
+    margin-top: 20px;
+}
+
+.cardTitle {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.cardTitle p {
+    font-weight: bolder;
+}
+
+/* .cardTitle p:hover {
+    color: #f44436;
+    color: #f9c10a;
+} */
+
+.overlay {
+    visibility: visible;
+}
+
+@media screen and (max-width: 992px) {
+    .overlay {
+        visibility: collapse;
+    }
+}
+
+.published {
+    color: black;
+}
+
+.unpublished {
+    color: #dc3545;
+    /* background-color: #dee2e6; */
+}
+
+

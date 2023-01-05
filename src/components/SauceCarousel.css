@@ -1,0 +1,45 @@
+.CarouselFrame {
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 20px;
+}
+
+.CarouselFrame h3 {
+    font-size: 35px;
+    font-weight: bolder;
+    color: white;
+    -webkit-text-stroke-width: 0.01px;
+    -webkit-text-stroke-color: black;
+    font-family: "Roboto", sans-serif;
+}
+
+@media screen and (min-width: 1200px) {
+    .CarouselFrame h3 {
+        font-size: 50px;
+        font-weight: bold;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .CarouselFrame {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .CarouselFrame h3 {
+        font-size: 25px;
+        font-weight: bold;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .CarouselFrame {
+        margin-left: 0%;
+        margin-right: 0%;
+        margin-bottom: 5px;
+    }
+    .CarouselFrame h3 {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+}

@@ -1,0 +1,71 @@
+.content {
+    font-family: "Andika", sans-serif;
+    font-size: 18px;
+}
+
+.content p {
+    margin-bottom: 8px;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
+}
+
+.social-media img {
+    width: 25px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.social-media a {
+    text-decoration: none;
+    color: black;
+}
+
+.social-media a:hover {
+    font-size: larger;
+    font-weight: bold;
+    color: #fed71a;
+}
+
+@media screen and (max-width: 991px) {
+    .social-media {
+        justify-content: start;
+        margin-left: 5%;
+    }
+}
+
+.myAvatar{
+    width: 80% !important;
+}
+
+@media screen and (max-width: 991px) {
+    .myAvatar{
+        width: 50% !important;
+    }
+}
+
+.donationLink {
+    color: #12aa9c;
+    font-size: large;
+}
+
+.donationLink:hover {
+    color: #fed71a;
+    font-size: larger;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.contact {
+    margin-top: 10px;
+}
+
+#linkedin {
+    color: #2868b2;
+}
+
+#linkedin:hover {
+    color: #fed71a;
+}

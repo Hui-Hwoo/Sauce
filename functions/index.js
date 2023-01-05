@@ -9,9 +9,9 @@
 
 const FirebaseConfig = require("./FirebaseConfig");
 const { functions, firestore, storageBucket, admin } = FirebaseConfig;
-const recipeAPI = require("./recipesAPI");
+const RestAPI = require("./RestAPI");
 
-exports.api = functions.https.onRequest(recipeAPI);
+exports.api = functions.https.onRequest(RestAPI);
 
 exports.onCreateRecipe = functions.firestore
     .document("recipes/{recipeId}")

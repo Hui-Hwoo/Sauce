@@ -1,0 +1,111 @@
+.NavFrame {
+    background-color: #000000;
+    margin-bottom: 5px;
+}
+
+.logo {
+    margin-left: 20px;
+    font-size: 20px;
+}
+.icon {
+    margin-left: 10px;
+    padding-top: 3px;
+    color: #ffc107;
+    font-family: "Rock Salt", cursive;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.icon:hover {
+    /* color: #f44436; */
+    color: white;
+}
+
+.bt {
+    border: none;
+    background: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Andika", sans-serif;
+    margin-right: 8px;
+}
+
+.home-bt {
+    border-color: white;
+    background: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Andika", sans-serif;
+    margin-right: 8px;
+}
+
+.bt:hover {
+    color: black;
+}
+
+.bt-login {
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Andika", sans-serif;
+    border-color: #ffc107;
+    background: #ffc107;
+    margin-right: 8px;
+}
+
+.btn-outline-success {
+    --bs-btn-active-color: #ffc107;
+    --bs-btn-active-bg: black;
+    --bs-btn-active-border-color: #ffc107;
+}
+
+.bt-login:hover {
+    color: #ffc107;
+    background-color: black;
+    border-color: #ffc107;
+}
+
+.navbar-toggler {
+    background-color: #ffc107;
+}
+
+@media screen and (max-width: 576px) {
+    .NavFrame {
+        margin-bottom: 0px;
+    }
+
+    .logo {
+        margin-left: 0px;
+    }
+
+    .bt {
+        color: black;
+        border: #ffc107;
+        border-color: black !important;
+    }
+
+    .bt-login {
+        color: black;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: "Andika", sans-serif;
+        border-color: #ffc107;
+        background: #ffc107;
+        margin-right: 8px;
+    }
+
+    .bt-login:hover {
+        color: black;
+        background-color: white;
+        border-color: black !important;
+    }
+
+    .home-bt {
+        color: black;
+        border-color: black !important;
+    }
+
+    
+}

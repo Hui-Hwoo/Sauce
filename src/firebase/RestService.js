@@ -27,7 +27,6 @@ const createDocument = async (collection, document) => {
         if (response.status !== 201) {
             const errorMessage = await response.text();
             const error = { message: errorMessage };
-
             throw error;
         }
 

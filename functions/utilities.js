@@ -12,58 +12,66 @@ const authorizeUser = async (authorizationHeader, firebaseAuth) => {
     }
 };
 
-const validateRecipePostPut = (newRecipe) => {
+const validateRecipePostPut = (newSauce) => {
     let missingFields = "";
 
-    if (!newRecipe) {
-        missingFields += "recipe";
-
+    if (!newSauce) {
+        missingFields += "sauce";
         return missingFields;
     }
 
-    if (!newRecipe.name) {
-        missingFields += "name,";
+    if (!newSauce.title) {
+        missingFields += "title, ";
     }
 
-    if (!newRecipe.category) {
-        missingFields += "category,";
+    if (!newSauce.description) {
+        missingFields += "description, ";
     }
 
-    if (!newRecipe.directions) {
-        missingFields += "directions,";
+    if (!newSauce.state) {
+        missingFields += "state, ";
     }
 
-    if (newRecipe.isPublished !== true && newRecipe.isPublished !== false) {
-        missingFields += "isPublished,";
+    if(newSauce.salty === 0 && newSauce.hot === 0 && newSauce.sweet === 0 && newSauce.sour ===0){
+        missingFields += "taste, ";
     }
 
-    if (!newRecipe.publishDate) {
-        missingFields += "publishDate,";
+    if (newSauce.isPublished !== true && newSauce.isPublished !== false) {
+        missingFields += "isPublished, ";
     }
 
-    if (!newRecipe.ingredients || newRecipe.ingredients.length === 0) {
-        missingFields += "ingredients,";
+    if (!newSauce.publishDate) {
+        missingFields += "publishDate, ";
     }
 
-    if (!newRecipe.imageUrl) {
-        missingFields += "imageUrl";
+    if (!newSauce.imageUrl) {
+        missingFields += "imageUrl, ";
+    }
+
+    if(!newSauce.creator) {
+        missingFields += "creator Info";
     }
 
     return missingFields;
 };
 
-const sanitizeRecipePostPut = (newRecipe) => {
-    const recipe = {};
+const sanitizeRecipePostPut = (newSauce) => {
+    const sauce = {};
 
-    recipe.name = newRecipe.name;
-    recipe.category = newRecipe.category;
-    recipe.directions = newRecipe.directions;
-    recipe.publishDate = new Date(newRecipe.publishDate * 1000);
-    recipe.isPublished = newRecipe.isPublished;
-    recipe.ingredients = newRecipe.ingredients;
-    recipe.imageUrl = newRecipe.imageUrl;
+    sauce.title = newSauce.title;
+    sauce.description = newSauce.description;
+    sauce.state = newSauce.state;
+    sauce.salty = newSauce.salty;
+    sauce.hot = newSauce.hot;
+    sauce.sweet = newSauce.sweet;
+    sauce.sour = newSauce.sour;
+    sauce.publishDate = new Date(newSauce.publishDate * 1000);
+    sauce.isPublished = newSauce.isPublished;
+    sauce.ingredients = newSauce.ingredients;
+    sauce.imageUrl = newSauce.imageUrl;
+    sauce.creator = newSauce.creator;
 
-    return recipe;
+    return sauce;
 };
 
 module.exports = {
