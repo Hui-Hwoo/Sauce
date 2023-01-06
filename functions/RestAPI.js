@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.get("/sauce", async (request, response) => {
     const authorizationHeader = request.headers["authorization"];
 
-    const { state, taste } = request.query;
+    const { state, taste, uid} = request.query;
 
     let userId = "";
     let collectionRef = firestore.collection("sauce");
@@ -33,6 +33,14 @@ app.get("/sauce", async (request, response) => {
         // return;
     } catch (error) {
         // continue
+    }
+
+    if(uid){
+        collectionRef = collectionRef.where(
+            "creator",
+            "==",
+            uid
+        );
     }
 
     if (state) {
@@ -150,7 +158,7 @@ app.put("/sauce/:id", async (request, response) => {
         response
             .status(400)
             .send(
-                `Recipe is not valid. Missing/invalid fields: ${missingFields}`
+                `Sauce is not valid. Missing/invalid fields: ${missingFields}`
             );
         return;
     }

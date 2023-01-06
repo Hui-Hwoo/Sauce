@@ -13,7 +13,18 @@ import RestService from "../firebase/RestService";
 import "./SauceForm.css";
 
 const SauceForm = (props) => {
-    const { user, show, setShow, currentSauce, hasAccess } = props;
+    const {
+        user,
+        show,
+        setShow,
+        currentSauce,
+        setCurrentSauce,
+        setErrorMsg,
+        setSuccessMsg,
+        setUpdateList,
+        hasAccess,
+    } = props;
+
     const [imageUrl, setImageUrl] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -31,7 +42,25 @@ const SauceForm = (props) => {
 
     const [confirm, setConfirm] = useState(false);
 
-    const resetForm = () => {
+    useEffect(() => {
+        if (currentSauce) {
+            setImageUrl(currentSauce.imageUrl);
+            setTitle(currentSauce.title);
+            setDescription(currentSauce.description);
+            setState(currentSauce.state);
+            setTaste({
+                salty: currentSauce.salty,
+                hot: currentSauce.hot,
+                sweet: currentSauce.sweet,
+                sour: currentSauce.sour,
+            });
+            setPublishDate(formatDate(currentSauce.publishDate));
+        } else {
+            emptyForm();
+        }
+    }, [currentSauce]);
+
+    const emptyForm = () => {
         setImageUrl("");
         setTitle("");
         setDescription("");
@@ -46,19 +75,6 @@ const SauceForm = (props) => {
     };
 
     useEffect(() => {
-        if (currentSauce) {
-            setImageUrl(currentSauce.imageUrl);
-            setTitle(currentSauce.title);
-            setDescription(currentSauce.description);
-            setState(currentSauce.state);
-            setTaste(currentSauce.taste);
-            setPublishDate(currentSauce.publishDate);
-        } else {
-            resetForm();
-        }
-    }, [user, currentSauce]);
-
-    useEffect(() => {
         var temp = 0;
         for (const key in taste) {
             temp = temp + taste[key];
@@ -66,53 +82,72 @@ const SauceForm = (props) => {
         setSums(temp.valueOf());
     }, [taste]);
 
+    const formatDate = (date) => {
+        let day = date.getUTCDate();
+        let month = date.getUTCMonth() + 1;
+        const year = date.getFullYear();
+        if (day < 10) {
+            day = `0${day}`;
+        }
+        if (month < 10) {
+            month = `0${month}`;
+        }
+        const dateString = `${year}-${month}-${day}`;
+        return dateString;
+    };
+
     const addSauce = async (newSauce) => {
         try {
             // const response = await FirestoreService.createDocument(
             //     "recipes",
             //     newRecipe
             // );
-            const response = await RestService.createDocument(
-                "sauce",
-                newSauce
-            );
-            alert(`successfully create a new recipe with ID ${response.id}!`);
-        } catch (error) {
-            alert(error.message);
-        } finally {
+            await RestService.createDocument("sauce", newSauce);
             setShow(false);
+            emptyForm();
+            setUpdateList(true);
+            setSuccessMsg("successfully create a new sauce!");
+        } catch (error) {
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
-    const updateSauce = async (newRecipe, recipeId) => {
+    const updateSauce = async (newSauce, sauceId) => {
         try {
             // await FirestoreService.updateDocument(
             //     "recipes",
             //     recipeId,
             //     newRecipe
             // );
-            await RestService.updateDocument("recipes", recipeId, newRecipe);
-            alert(`successfully updated a recipe with ID ${recipeId}`);
+            await RestService.updateDocument("sauce", sauceId, newSauce);
+            setShow(false);
+            setCurrentSauce(null);
+            setUpdateList(true);
+            setSuccessMsg("successfully updated sauce");
         } catch (error) {
-            alert(error.message);
-            throw error;
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
     const cancelEdit = () => {
         setShow(false);
-        resetForm();
+        setCurrentSauce(null);
     };
 
-    const deleteSauce = async (recipeId) => {
+    const deleteSauce = async (sauceId) => {
         try {
             // await FirestoreService.deleteDocument("recipes", recipeId);
-            await RestService.deleteDocument("recipes", recipeId);
+            await RestService.deleteDocument("sauce", sauceId);
             window.scrollTo(0, 0);
-            alert("Successfully deleted the recipe");
+            setShow(false);
+            setCurrentSauce(null);
+            setUpdateList(true);
+            setSuccessMsg("Successfully deleted the sauce");
         } catch (error) {
-            alert(error.message);
-            throw error;
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
@@ -120,7 +155,7 @@ const SauceForm = (props) => {
         event.preventDefault();
 
         if (!imageUrl) {
-            alert("Missing recipe image!");
+            setErrorMsg("Missing sauce image!");
             return;
         }
 
@@ -135,7 +170,7 @@ const SauceForm = (props) => {
             sour: taste["sour"],
             publishDate: new Date(publishDate).getTime() / 1000,
             isPublished,
-            imageUrl
+            imageUrl,
         };
 
         if (currentSauce) {
@@ -143,7 +178,6 @@ const SauceForm = (props) => {
         } else {
             addSauce(newSauce);
         }
-        resetForm();
     };
 
     return (
@@ -155,9 +189,7 @@ const SauceForm = (props) => {
                 backdrop="static"
                 show={show}
                 fullscreen="md-down"
-                onHide={() => {
-                    setShow(false);
-                }}
+                onHide={cancelEdit}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
@@ -183,6 +215,7 @@ const SauceForm = (props) => {
                                     setImageUrl={setImageUrl}
                                     hasAccess={hasAccess}
                                     isPublished={currentSauce?.isPublished}
+                                    setErrorMsg={setErrorMsg}
                                 ></ImageUpload>
                             </Col>
                             <Col sm={12} xs={12} lg={7}>
@@ -651,42 +684,54 @@ const SauceForm = (props) => {
                         Close
                     </Button>
                     {hasAccess && user && (
-                        <Button onClick={submitSauceFormHandler}>{currentSauce ? "Update": "Add"}</Button>
+                        <Button onClick={submitSauceFormHandler}>
+                            {currentSauce ? "Update" : "Add"}
+                        </Button>
                     )}
                     {hasAccess && user && currentSauce && (
-                        <Button onClick={deleteSauce}>Delete</Button>
+                        <Button
+                            variant="danger"
+                            onClick={() => {
+                                setShow(false);
+                                setConfirm(true);
+                            }}
+                        >
+                            Delete
+                        </Button>
                     )}
                 </Modal.Footer>
             </Modal>
             <Modal
+                centered
+                backdrop="static"
                 show={confirm}
                 onHide={() => {
                     setConfirm(false);
+                    setShow(true);
                 }}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Confirm</Modal.Title>
+                    <Modal.Title id="dangerTitle">Dangerous</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    Please double check before making changes!
-                </Modal.Body>
+                <Modal.Body>Are you sure to delete this sauce?</Modal.Body>
                 <Modal.Footer>
                     <Button
                         variant="secondary"
                         onClick={() => {
                             setConfirm(false);
+                            setShow(true);
                         }}
                     >
                         Cancel
                     </Button>
                     <Button
-                        variant="primary"
+                        variant="danger"
                         onClick={() => {
                             setConfirm(false);
-                            deleteSauce(currentSauce.id)
+                            deleteSauce(currentSauce.id);
                         }}
                     >
-                        Save Changes
+                        Delete
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -21,8 +21,8 @@ const createDocument = (col, doc) => {
         const response = addDoc(collection(firestore, col), doc);
         return response;
     } catch (error) {
-        alert(error.message);
-        return;
+        console.log(error.message);
+        throw error;
     }
 };
 

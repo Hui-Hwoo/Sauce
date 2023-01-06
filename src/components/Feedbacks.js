@@ -14,7 +14,7 @@ const Feedbacks = (props) => {
                 delay={5000}
                 autohide
                 animation={true}
-                bg={errorMsg?"warning":"light"}
+                bg={errorMsg?"light":"warning"}
             >
                 <Toast.Header>
                     <img

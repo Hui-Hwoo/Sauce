@@ -7,7 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import "./LoginForm.css";
 
 const LoginForm = (props) => {
-    const { setUser, show, setShow } = props;
+    const { setUser, show, setShow, setErrorMsg, setSuccessMsg } = props;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loginMode, setLoginMode] = useState(true);
@@ -21,10 +21,10 @@ const LoginForm = (props) => {
             );
             setUser(response.user);
             setShow(false);
-            console.log("successfully logged up");
-            console.log(response.user);
+            setSuccessMsg("Successfully logged in!");
         } catch (error) {
-            alert(error.message);
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
@@ -36,9 +36,11 @@ const LoginForm = (props) => {
                 password
             );
             setUser(response.user);
-            console.log("successful sign up");
+            setShow(false);
+            setSuccessMsg("successful sign up!");
         } catch (error) {
-            alert(error.message);
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
@@ -47,8 +49,11 @@ const LoginForm = (props) => {
         try {
             const response = await FirebaseAuthService.loginWithGoogle();
             setUser(response.user);
+            setShow(false);
+            setSuccessMsg("Successfully logged in!");
         } catch (error) {
-            alert(error.message);
+            console.log(error);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
@@ -57,8 +62,11 @@ const LoginForm = (props) => {
         try {
             const response = await FirebaseAuthService.loginWithFacebook();
             setUser(response.user);
+            setShow(false);
+            setSuccessMsg("Successfully logged in!");
         } catch (error) {
-            alert(error.message);
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 
@@ -67,8 +75,11 @@ const LoginForm = (props) => {
         try {
             const response = await FirebaseAuthService.loginWithGitHub();
             setUser(response.user);
+            setShow(false);
+            setSuccessMsg("Successfully logged in!");
         } catch (error) {
-            alert(error.message);
+            console.log(error.message);
+            setErrorMsg("Something wrong, please try again!");
         }
     };
 

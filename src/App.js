@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FirebaseAuthService from "./firebase/FirebaseAuthService";
-// import RestService from "./firebase/RestService";
+import RestService from "./firebase/RestService";
 import Filter from "./components/SauceFilter";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,134 +11,17 @@ import SauceForm from "./components/SauceForm";
 import Feedbacks from "./components/Feedbacks";
 import { Container, Row, Col } from "react-bootstrap";
 
-// const App = () => {
-//     const [user, setUser] = useState(null);
-//     const [loginMode, setLoginMode] = useState(true);
-
-//     const [recipes, setRecipes] = useState([]);
-//     const [currentRecipe, setCurrentRecipe] = useState(null);
-
-//     const [category, setCategory] = useState("");
-//     const [order, setOrder] = useState("publishDateDesc");
-//     const [perPage, setPerPage] = useState(3);
-//     const [update, setUpdate] = useState(false);
-//     const [totalPages, setTotalPages] = useState(1);
-//     const [currentPage, setCurrentPage] = useState(1);
-
-//     useEffect(() => {
-//         FirebaseAuthService.subscribeToAuthChanges(setUser);
-//     }, []);
-
-//     // useEffect(() => {
-//     //     fetchRecipes(true);
-//     //     // eslint-disable-next-line react-hooks/exhaustive-deps
-//     // }, []);
-
-//     useEffect(() => {
-//         fetchRecipes();
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [order, currentPage]);
-
-//     useEffect(() => {
-//         if (update) {
-//             setUpdate(false);
-//             setCurrentRecipe("");
-//         }
-//         fetchRecipes(true);
-//         setCurrentPage(1);
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//     }, [perPage, category, update]);
-
-//     const fetchRecipes = async (restart = false) => {
-//         try {
-//             const response = await RestService.readDocuments("recipes", {
-//                 category: category,
-//                 order: order === "publishDateAsc" ? "asc" : "desc",
-//                 perPage: perPage,
-//                 pageNumber: restart ? 1 : currentPage,
-//                 isPublished: user === null ? true : false,
-//             });
-//             let fetchedRecipes = [];
-
-//             if (response && response.documents) {
-//                 setTotalPages(Math.ceil(response.recipeCount / perPage));
-//                 fetchedRecipes = response.documents;
-//                 fetchedRecipes.forEach((recipe) => {
-//                     const unixPublishDateTime = recipe.publishDate;
-//                     recipe.publishDate = new Date(unixPublishDateTime * 1000);
-//                 });
-//             }
-//             setRecipes(fetchedRecipes);
-//         } catch (error) {
-//             console.log(error.message);
-//             throw error;
-//         }
-//     };
-
-//     return (
-//         <React.Fragment>
-//             <div className="title-row">
-//                 <h1 className="title">SAUCE</h1>
-//                 {!user &&
-//                     (loginMode ? (
-//                         <LoginForm setUser={setUser}></LoginForm>
-//                     ) : (
-//                         <SignupForm></SignupForm>
-//                     ))}
-//                 {!user && (
-//                     <button
-//                         type="button"
-//                         onClick={() => {
-//                             setLoginMode(!loginMode);
-//                         }}
-//                     >
-//                         {"switch to " + (loginMode ? "Signup" : "Login")}
-//                     </button>
-//                 )}
-//                 {user && <h1>{`Welcome ${user.email || "!"}`}</h1>}
-//                 {user && (
-//                     <button
-//                         type="button"
-//                         onClick={() => {
-//                             FirebaseAuthService.logoutUser();
-//                             setUser(null);
-//                         }}
-//                     >
-//                         Log out
-//                     </button>
-//                 )}
-//             </div>
-//             <div>
-//                 <Filter
-//                     category={category}
-//                     setCategory={setCategory}
-//                     order={order}
-//                     setOrder={setOrder}
-//                 ></Filter>
-//                 <RecipeList
-//                     user={user}
-//                     recipes={recipes}
-//                     setCurrentRecipe={setCurrentRecipe}
-//                 ></RecipeList>
-//                 <LoadMore
-//                     perPage={perPage}
-//                     setPerPage={setPerPage}
-//                     currentPage={currentPage}
-//                     setCurrentPage={setCurrentPage}
-//                     totalPages={totalPages}
-//                 ></LoadMore>
-//                 <RecipeForm
-//                     currentRecipe={currentRecipe}
-//                     setCurrentRecipe={setCurrentRecipe}
-//                     setUpdate={setUpdate}
-//                 ></RecipeForm>
-//             </div>
-//         </React.Fragment>
-//     );
-// };
-
 const App = () => {
+    // For basic Info
     const [user, setUser] = useState(null);
+    const [sauce, setSauce] = useState([]);
+    const [isHome, setIsHome] = useState(true);
+
+    useEffect(() => {
+        FirebaseAuthService.subscribeToAuthChanges(setUser);
+    }, []);
+
+    // For filter
     const [taste, setTaste] = useState({
         all: true,
         salty: true,
@@ -146,33 +29,92 @@ const App = () => {
         sweet: true,
         sour: true,
     });
-
     const [state, setState] = useState({
         all: true,
         liquid: true,
         solid: true,
     });
 
-    const [isHome, setIsHome] = useState(true);
-    const [showCard, setShowCard] = useState(false);
-    const [showMsg, setShowMsg] = useState(true);
-    const [errorMsg, setErrorMsg] = useState(
-        "Errorrrrrrrr"
-    );
-    const [successMsg, setSuccessMsg] = useState(
-        "Successsssss"
-    );
-    const [currentSauce, setCurrentSauce] = useState(null);
+    useEffect(() => {
+        fetchSauce();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, state, taste]);
 
-    const test = [1, 2, 3, 4, 5, 6];
+    // For One Sauce Info
+    const [currentSauce, setCurrentSauce] = useState(null);
+    const [showCard, setShowCard] = useState(false);
+
+    // For feedback message
+    const [showMsg, setShowMsg] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
 
     useEffect(() => {
-        FirebaseAuthService.subscribeToAuthChanges(setUser);
-    }, []);
+        if (errorMsg || successMsg) {
+            setShowMsg(true);
+        }
+    }, [errorMsg, successMsg]);
 
-    const editItem = (sauce) => {
-        setCurrentSauce(sauce);
-        setShowCard(true);
+    useEffect(() => {
+        if (!showMsg) {
+            setErrorMsg("");
+            setSuccessMsg("");
+        }
+    }, [showMsg]);
+
+    // For updating after each change
+    const [updateList, setUpdateList] = useState(false);
+
+    useEffect(() => {
+        if (updateList) {
+            fetchSauce()
+            setUpdateList(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updateList]);
+
+    const fetchSauce = async () => {
+        try {
+            const response = await RestService.readDocuments("sauce", {
+                state: getStateStr(state),
+                taste: getTasteStr(state),
+                uid: isHome?"":user.uid,
+            }, !!user);
+            let fetchedData = [];
+            if (response && response.documents) {
+                fetchedData = response.documents;
+                fetchedData.forEach((item) => {
+                    const unixPublishDateTime = item.publishDate;
+                    item.publishDate = new Date(unixPublishDateTime * 1000);
+                });
+            }
+            setSauce(fetchedData);
+        } catch (error) {
+            console.log(error.message);
+            setErrorMsg("Something wrong when fetching sauce!")
+        }
+    };
+
+    // Helper toString-function
+    const getStateStr = (state) => {
+        if (state["all"]) {
+            return "";
+        } else {
+            return state["liquid"] ? "0" : "1";
+        }
+    };
+
+    const getTasteStr = (taste) => {
+        var tasteStr = "";
+        if (!taste["all"]) {
+            const tasteList = ["salty", "hot", "sweet", "sour"];
+            tasteList.forEach((value, index) => {
+                if (taste[value]) {
+                    tasteStr += index.toString();
+                }
+            });
+        }
+        return tasteStr;
     };
 
     return (
@@ -181,6 +123,9 @@ const App = () => {
                 user={user}
                 setUser={setUser}
                 setIsHome={setIsHome}
+                setShowAddSauce={setShowCard}
+                setErrorMsg={setErrorMsg}
+                setSuccessMsg={setSuccessMsg}
             ></SauceNavbar>
             <Feedbacks
                 show={showMsg}
@@ -194,10 +139,12 @@ const App = () => {
                 show={showCard}
                 setShow={setShowCard}
                 currentSauce={currentSauce}
+                setCurrentSauce={setCurrentSauce}
+                setErrorMsg={setErrorMsg}
+                setSuccessMsg={setSuccessMsg}
+                setUpdateList={setUpdateList}
                 hasAccess={
-                    false && user && user?.uid === currentSauce?.creator
-                        ? true
-                        : false
+                    user && (!currentSauce || user.uid === currentSauce.creator)
                 }
             ></SauceForm>
             <Filter
@@ -209,12 +156,15 @@ const App = () => {
             ></Filter>
             <Container>
                 <Row>
-                    {test.map((item, index) => {
+                    {sauce.map((item, index) => {
                         return (
                             <Col xl={3} lg={4} md={6} key={index}>
                                 <SauceItem
                                     sauce={item}
-                                    editItem={editItem}
+                                    editItem={() => {
+                                        setCurrentSauce(item);
+                                        setShowCard(true);
+                                    }}
                                 ></SauceItem>
                             </Col>
                         );

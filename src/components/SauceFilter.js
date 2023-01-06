@@ -85,7 +85,6 @@ const Filter = (props) => {
             } else {
                 var flag = true;
                 for (const element in state) {
-                    console.log(element);
                     if (element !== "all" && element !== item) {
                         flag = flag && state[element];
                     }

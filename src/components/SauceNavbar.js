@@ -9,13 +9,12 @@ import MyInfo from "./MyInfo";
 import LoginForm from "./LoginForm";
 import FirebaseAuthService from "../firebase/FirebaseAuthService";
 import "./SauceNavbar.css";
-import SauceForm from "./SauceForm";
+
 
 const SauceNavbar = (props) => {
-    const { user, setUser, setIsHome } = props;
+    const { user, setUser, setIsHome, setShowAddSauce, setErrorMsg, setSuccessMsg } = props;
     const [showMyInfo, setShowMyInfo] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
-    const [showAddSauce, setShowAddSauce] = useState(false);
     return (
         <>
             <Navbar key="navbar" expand="sm" className="NavFrame">
@@ -101,6 +100,7 @@ const SauceNavbar = (props) => {
                                             FirebaseAuthService.logoutUser();
                                             setUser(null);
                                             setIsHome(true);
+                                            setSuccessMsg("Successfully logged out!")
                                         }}
                                     >
                                         Log out
@@ -116,14 +116,9 @@ const SauceNavbar = (props) => {
                 setUser={setUser}
                 show={showLogin}
                 setShow={setShowLogin}
+                setErrorMsg={setErrorMsg}
+                setSuccessMsg={setSuccessMsg}
             ></LoginForm>
-            <SauceForm
-                user={user}
-                show={showAddSauce}
-                setShow={setShowAddSauce}
-                currentSauce={null}
-                hasAccess={true}
-            ></SauceForm>
         </>
     );
 };

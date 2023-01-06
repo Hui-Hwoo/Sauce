@@ -8,7 +8,7 @@ import StorageService from "../firebase/StorageService";
 import "./imageUpload.css";
 
 const ImageUpload = (props) => {
-    const { imageUrl, setImageUrl, hasAccess, isPublished } = props;
+    const { imageUrl, setImageUrl, setErrorMsg, hasAccess, isPublished } = props;
     const [progress, setProgress] = useState(-1);
 
     const imageRef = useRef();
@@ -25,7 +25,7 @@ const ImageUpload = (props) => {
         const file = files[0];
 
         if (!file) {
-            alert("File select failed, please try again!");
+            setErrorMsg("File select failed, please try again!");
             return;
         }
 
@@ -40,8 +40,8 @@ const ImageUpload = (props) => {
         } catch (error) {
             setProgress(-1);
             imageRef.current.value = null;
-            alert(error.message);
-            throw error;
+            console.log(error.message)
+            setErrorMsg("Something wrong when uploading image, please try again!");
         }
     };
 

@@ -10,7 +10,7 @@ const createDocument = async (collection, document) => {
     try {
         token = await auth.currentUser.getIdToken();
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
         throw error;
     }
 
@@ -32,12 +32,12 @@ const createDocument = async (collection, document) => {
 
         return response.json();
     } catch (error) {
-        alert(error.message);
+        console.log(error.message);
         throw error;
     }
 };
 
-const readDocuments = async (collection, queries) => {
+const readDocuments = async (collection, queries, isLogin) => {
     try {
         const url = new URL(`${BASE_URL}/${collection}`);
 
@@ -48,11 +48,12 @@ const readDocuments = async (collection, queries) => {
         }
 
         let token;
-
-        try {
-            token = await auth.currentUser.getIdToken();
-        } catch (error) {
-            // continue.
+        if(isLogin){
+            try {
+                token = await auth.currentUser.getIdToken();
+            } catch (error) {
+                // continue.
+            }
         }
 
         const response = await fetch(url, {
@@ -70,7 +71,6 @@ const readDocuments = async (collection, queries) => {
 
         return response.json();
     } catch (error) {
-        alert(error.message);
         throw error;
     }
 };
@@ -90,13 +90,11 @@ const updateDocument = async (collection, id, document) => {
         if (response.status !== 200) {
             const errorMessage = await response.text();
             const error = { message: errorMessage };
-
             throw error;
         }
 
         return response.json();
     } catch (error) {
-        alert(error.message);
         throw error;
     }
 };
@@ -119,7 +117,6 @@ const deleteDocument = async (collection, id) => {
             throw error;
         }
     } catch (error) {
-        alert(error.message);
         throw error;
     }
 };

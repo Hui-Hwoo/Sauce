@@ -11,7 +11,7 @@ const SauceItem = (props) => {
 
     var sums = 1;
     useEffect(() => {
-        if (sauce?.taste) {
+        if (sauce.taste) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             sums = 0;
             for (const key in sauce.taste) {
@@ -19,6 +19,20 @@ const SauceItem = (props) => {
             }
         }
     }, []);
+
+    const formatDate = (date) => {
+        let day = date.getUTCDate();
+        let month = date.getUTCMonth() + 1;
+        const year = date.getFullYear();
+        if (day < 10) {
+            day = `0${day}`;
+        }
+        if (month < 10) {
+            month = `0${month}`;
+        }
+        const dateString = `${year}-${month}-${day}`;
+        return dateString;
+    };
 
     // const defaultUrl =
     //     "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/totoro.gif?alt=media&token=c8448550-2f03-4fd4-8559-c7cdff3fe05a";
@@ -35,55 +49,47 @@ const SauceItem = (props) => {
             <Card.Img variant="top" src={sauce?.imageUrl || defaultUrl2} />
             <Card.Body>
                 <ProgressBar className="card-progress">
-                    <ProgressBar
-                        label="salty"
-                        animated
-                        style={{ color: "#000000" }}
-                        now={
-                            (sauce?.taste &&
-                                (sauce.taste?.salty / sums) * 100) ||
-                            25
-                        }
-                        key={1}
-                    />
-                    <ProgressBar
-                        label="hot"
-                        animated
-                        style={{ color: "#000000" }}
-                        variant="danger"
-                        now={
-                            (sauce?.taste &&
-                                (sauce.taste?.salty / sums) * 100) ||
-                            25
-                        }
-                        key={2}
-                    />
-                    <ProgressBar
-                        label="sweet"
-                        animated
-                        style={{ color: "#000000" }}
-                        variant="warning"
-                        now={
-                            (sauce?.taste &&
-                                (sauce.taste?.salty / sums) * 100) ||
-                            25
-                        }
-                        key={3}
-                    />
-                    <ProgressBar
-                        label="sour"
-                        animated
-                        style={{
-                            backgroundColor: "#8bc34a",
-                            color: "#000000",
-                        }}
-                        now={
-                            (sauce?.taste &&
-                                (sauce.taste?.salty / sums) * 100) ||
-                            25
-                        }
-                        key={4}
-                    />
+                    {sauce.salty > 0 && (
+                        <ProgressBar
+                            label="salty"
+                            animated
+                            style={{ color: "#000000" }}
+                            now={(sauce.salty / sums) * 100}
+                            key={1}
+                        />
+                    )}
+                    {sauce.hot > 0 && (
+                        <ProgressBar
+                            label="hot"
+                            animated
+                            style={{ color: "#000000" }}
+                            variant="danger"
+                            now={(sauce.hot / sums) * 100}
+                            key={2}
+                        />
+                    )}
+                    {sauce.sweet > 0 && (
+                        <ProgressBar
+                            label="sweet"
+                            animated
+                            style={{ color: "#000000" }}
+                            variant="warning"
+                            now={(sauce.sweet / sums) * 100}
+                            key={3}
+                        />
+                    )}
+                    {sauce.sour > 0 && (
+                        <ProgressBar
+                            label="sour"
+                            animated
+                            style={{
+                                backgroundColor: "#8bc34a",
+                                color: "#000000",
+                            }}
+                            now={(sauce.sour / sums) * 100}
+                            key={4}
+                        />
+                    )}
                 </ProgressBar>
 
                 <Card.Title className="cardTitle">
@@ -95,14 +101,20 @@ const SauceItem = (props) => {
                             placement="top"
                             overlay={
                                 <Tooltip className="overlay">
-                                    Will be published on 
-                                    <strong>{sauce?.publishDate}</strong>
+                                    Will be published
+                                    {sauce.publishDate ? " on" : " in future"}
+                                    {sauce.publishDate && <br />}
+                                    {sauce.publishDate && (
+                                        <strong>
+                                            {formatDate(sauce.publishDate)}
+                                        </strong>
+                                    )}
                                 </Tooltip>
                             }
                         >
                             <p
                                 className={
-                                    sauce?.title
+                                    sauce?.isPublished
                                         ? "published"
                                         : "unpublished"
                                 }

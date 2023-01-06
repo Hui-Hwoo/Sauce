@@ -20,7 +20,7 @@ const loginUser = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
 };
 
-const logoutUser = () => {
+const logoutUser = async () => {
     return auth.signOut();
 };
 
@@ -32,12 +32,12 @@ const loginWithGoogle = () => {
 const loginWithFacebook = () => {
     const provider = new FacebookAuthProvider();
     return signInWithPopup(auth, provider);
-}
+};
 
 const loginWithGitHub = () => {
     const provider = new GithubAuthProvider();
     return signInWithPopup(auth, provider);
-}
+};
 
 const subscribeToAuthChanges = (handleAuthChange) => {
     const logout = onAuthStateChanged(auth, (user) => {
