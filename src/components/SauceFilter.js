@@ -9,101 +9,23 @@ const Filter = (props) => {
     const { taste, setTaste, state, setState, isHome } = props;
 
     const checkTaste = (item) => {
-        if (item === "all") {
-            if (taste["all"]) {
-                setTaste({
-                    all: false,
-                    salty: false,
-                    hot: false,
-                    sweet: false,
-                    sour: false,
-                });
-            } else {
-                setTaste({
-                    all: true,
-                    salty: true,
-                    hot: true,
-                    sweet: true,
-                    sour: true,
-                });
-            }
-        } else {
-            if (taste["all"]) {
-                setTaste({
-                    ...taste,
-                    all: false,
-                    [item]: false,
-                });
-            } else {
-                var flag = true;
-                for (const element in taste) {
-                    if (element !== "all" && element !== item) {
-                        flag = flag && taste[element];
-                    }
-                }
-
-                if (flag) {
-                    setTaste({
-                        all: true,
-                        salty: true,
-                        hot: true,
-                        sweet: true,
-                        sour: true,
-                    });
-                } else {
-                    setTaste({
-                        ...taste,
-                        [item]: !taste[item],
-                    });
-                }
-            }
-        }
+        const emptyTaste = {
+            all: false,
+            salty: false,
+            hot: false,
+            sweet: false,
+            sour: false,
+        };
+        setTaste({ ...emptyTaste, [item]: true });
     };
 
     const checkState = (item) => {
-        if (item === "all") {
-            if (state["all"]) {
-                setState({
-                    all: false,
-                    liquid: false,
-                    solid: false,
-                });
-            } else {
-                setState({
-                    all: true,
-                    liquid: true,
-                    solid: true,
-                });
-            }
-        } else {
-            if (state["all"]) {
-                setState({
-                    ...state,
-                    all: false,
-                    [item]: false,
-                });
-            } else {
-                var flag = true;
-                for (const element in state) {
-                    if (element !== "all" && element !== item) {
-                        flag = flag && state[element];
-                    }
-                }
-
-                if (flag) {
-                    setState({
-                        all: true,
-                        liquid: true,
-                        solid: true,
-                    });
-                } else {
-                    setState({
-                        ...state,
-                        [item]: !state[item],
-                    });
-                }
-            }
-        }
+        const emptyState = {
+            all: false,
+            liquid: false,
+            solid: false,
+        };
+        setState({ ...emptyState, [item]: true });
     };
 
     const tasteList = ["salty", "hot", "sweet", "sour"];
@@ -437,3 +359,101 @@ const Filter = (props) => {
 };
 
 export default Filter;
+
+// const checkTaste = (item) => {
+//     if (item === "all") {
+//         if (taste["all"]) {
+//             setTaste({
+//                 all: false,
+//                 salty: false,
+//                 hot: false,
+//                 sweet: false,
+//                 sour: false,
+//             });
+//         } else {
+//             setTaste({
+//                 all: true,
+//                 salty: true,
+//                 hot: true,
+//                 sweet: true,
+//                 sour: true,
+//             });
+//         }
+//     } else {
+//         if (taste["all"]) {
+//             setTaste({
+//                 ...taste,
+//                 all: false,
+//                 [item]: false,
+//             });
+//         } else {
+//             var flag = true;
+//             for (const element in taste) {
+//                 if (element !== "all" && element !== item) {
+//                     flag = flag && taste[element];
+//                 }
+//             }
+
+//             if (flag) {
+//                 setTaste({
+//                     all: true,
+//                     salty: true,
+//                     hot: true,
+//                     sweet: true,
+//                     sour: true,
+//                 });
+//             } else {
+//                 setTaste({
+//                     ...taste,
+//                     [item]: !taste[item],
+//                 });
+//             }
+//         }
+//     }
+// };
+
+// const checkState = (item) => {
+//     if (item === "all") {
+//         if (state["all"]) {
+//             setState({
+//                 all: false,
+//                 liquid: false,
+//                 solid: false,
+//             });
+//         } else {
+//             setState({
+//                 all: true,
+//                 liquid: true,
+//                 solid: true,
+//             });
+//         }
+//     } else {
+//         if (state["all"]) {
+//             setState({
+//                 ...state,
+//                 all: false,
+//                 [item]: false,
+//             });
+//         } else {
+//             var flag = true;
+//             for (const element in state) {
+//                 if (element !== "all" && element !== item) {
+//                     flag = flag && state[element];
+//                 }
+//             }
+
+//             if (flag) {
+//                 setState({
+//                     all: true,
+//                     liquid: true,
+//                     solid: true,
+//                 });
+//             } else {
+//                 setState({
+//                     ...state,
+//                     [item]: !state[item],
+//                 });
+//             }
+//         }
+//     }
+// };

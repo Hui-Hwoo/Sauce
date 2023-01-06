@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.get("/sauce", async (request, response) => {
     const authorizationHeader = request.headers["authorization"];
 
-    const { state, taste, uid} = request.query;
+    const { state, taste, uid } = request.query;
 
     let userId = "";
     let collectionRef = firestore.collection("sauce");
@@ -35,16 +35,12 @@ app.get("/sauce", async (request, response) => {
         // continue
     }
 
-    if(uid){
-        collectionRef = collectionRef.where(
-            "creator",
-            "==",
-            uid
-        );
+    if (uid) {
+        collectionRef = collectionRef.where("creator", "==", uid);
     }
 
     if (state) {
-        const stateList = ["liquid", "solid"];
+        const stateList = ["solid", "liquid"];
         collectionRef = collectionRef.where(
             "state",
             "==",
@@ -52,15 +48,29 @@ app.get("/sauce", async (request, response) => {
         );
     }
 
+
     if (taste) {
         const tasteList = ["salty", "hot", "sweet", "sour"];
-        for (let i in taste) {
-            collectionRef = collectionRef.where(
-                tasteList[parseInt(taste[i])],
-                ">",
-                0
-            );
-        }
+
+        collectionRef = collectionRef.where(
+            tasteList[parseInt(taste)],
+            ">",
+            0
+        );
+
+        // for (let i = 1; i < taste.length; i++) {
+        //     filterList.push(tasteList[parseInt(taste[i])]);
+        // }
+
+        // Firebase cannot have inequality filters on multiple properties
+
+        // for (let i in taste) {
+        //     collectionRef = collectionRef.where(
+        //         tasteList[parseInt(taste[i])],
+        //         ">",
+        //         0
+        //     );
+        // }
     }
 
     try {
@@ -71,7 +81,7 @@ app.get("/sauce", async (request, response) => {
             const data = sauce.data();
             data.publishDate = data.publishDate._seconds;
 
-            if ((!data.isPublished) && (userId !== data.creator)) {
+            if (!data.isPublished && userId !== data.creator) {
                 data.title = "";
                 data.description =
                     "Secret Sauce, get more details after it's published";
@@ -79,6 +89,19 @@ app.get("/sauce", async (request, response) => {
             }
             return { ...data, id };
         });
+
+        // let finalSauce;
+        // if (filterList) {
+        //     finalSauce = fetchedSauce.filter((sauce) => {
+        //         let flag = true;
+        //         for (let i = 0; i < filterList.length; i++) {
+        //             flag = flag && sauce[filterList[i] > 0];
+        //         }
+        //         return flag;
+        //     });
+        // } else {
+        //     finalSauce = fetchedSauce;
+        // }
 
         const payload = {
             documents: fetchedSauce,
@@ -99,7 +122,10 @@ app.post("/sauce", async (request, response) => {
 
     var creator = "";
     try {
-        const userInfo = await Utilities.authorizeUser(authorizationHeader, auth);
+        const userInfo = await Utilities.authorizeUser(
+            authorizationHeader,
+            auth
+        );
         creator = userInfo.uid;
     } catch (error) {
         response.status(403).send(error.message);
@@ -123,7 +149,7 @@ app.post("/sauce", async (request, response) => {
 
         const firestoreResponse = await firestore
             .collection("sauce")
-            .add({...sauce, creator});
+            .add({ ...sauce, creator });
 
         const sauceId = firestoreResponse.id;
 
@@ -143,7 +169,10 @@ app.put("/sauce/:id", async (request, response) => {
 
     var creator = "";
     try {
-        const userInfo= await Utilities.authorizeUser(authorizationHeader, auth);
+        const userInfo = await Utilities.authorizeUser(
+            authorizationHeader,
+            auth
+        );
         creator = userInfo.uid;
     } catch (error) {
         response.status(401).send(error.message);
@@ -165,7 +194,10 @@ app.put("/sauce/:id", async (request, response) => {
 
     try {
         const sauce = Utilities.sanitizeSaucePostPut(newSauce);
-        await firestore.collection("sauce").doc(id).set({...sauce, creator});
+        await firestore
+            .collection("sauce")
+            .doc(id)
+            .set({ ...sauce, creator });
         response.status(200).send({ id });
     } catch (error) {
         response.status(400).send(error.message);

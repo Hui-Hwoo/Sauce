@@ -24,15 +24,15 @@ const App = () => {
     // For filter
     const [taste, setTaste] = useState({
         all: true,
-        salty: true,
-        hot: true,
-        sweet: true,
-        sour: true,
+        salty: false,
+        hot: false,
+        sweet: false,
+        sour: false,
     });
     const [state, setState] = useState({
         all: true,
-        liquid: true,
-        solid: true,
+        liquid: false,
+        solid: false,
     });
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const App = () => {
 
     useEffect(() => {
         if (updateList) {
-            fetchSauce()
+            fetchSauce();
             setUpdateList(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,11 +75,16 @@ const App = () => {
 
     const fetchSauce = async () => {
         try {
-            const response = await RestService.readDocuments("sauce", {
-                state: getStateStr(state),
-                taste: getTasteStr(taste),
-                uid: isHome?"":user.uid,
-            }, !!user);
+            const userId = isHome ? "" : user.uid;
+            const response = await RestService.readDocuments(
+                "sauce",
+                {
+                    state: getStateStr(state),
+                    taste: getTasteStr(taste),
+                    uid: userId,
+                },
+                !!user
+            );
             let fetchedData = [];
             if (response && response.documents) {
                 fetchedData = response.documents;
@@ -91,7 +96,7 @@ const App = () => {
             setSauce(fetchedData);
         } catch (error) {
             console.log(error.message);
-            setErrorMsg("Something wrong when fetching sauce!")
+            setErrorMsg("Something wrong when fetching sauce!");
         }
     };
 
