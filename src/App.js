@@ -77,7 +77,7 @@ const App = () => {
         try {
             const response = await RestService.readDocuments("sauce", {
                 state: getStateStr(state),
-                taste: getTasteStr(state),
+                taste: getTasteStr(taste),
                 uid: isHome?"":user.uid,
             }, !!user);
             let fetchedData = [];
