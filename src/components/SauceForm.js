@@ -233,7 +233,7 @@ const SauceForm = (props) => {
                                             <InputGroup className="mb-3">
                                                 <Form.Control
                                                     placeholder="Sauce name"
-                                                    value={title}
+                                                    value={title?title:"Secret Sauce"}
                                                     aria-label="Title"
                                                     aria-describedby="title-content"
                                                     onChange={(e) => {

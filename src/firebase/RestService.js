@@ -53,6 +53,7 @@ const readDocuments = async (collection, queries, isLogin) => {
                 token = await auth.currentUser.getIdToken();
             } catch (error) {
                 // continue.
+                token = "";
             }
         }
 

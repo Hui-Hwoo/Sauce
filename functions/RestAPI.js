@@ -72,7 +72,7 @@ app.get("/sauce", async (request, response) => {
             data.publishDate = data.publishDate._seconds;
 
             if ((!data.isPublished) && (userId !== data.creator)) {
-                data.title = "Secret Sauce";
+                data.title = "";
                 data.description =
                     "Secret Sauce, get more details after it's published";
                 data.imageUrl = "";

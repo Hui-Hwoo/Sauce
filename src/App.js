@@ -38,7 +38,7 @@ const App = () => {
     useEffect(() => {
         fetchSauce();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, state, taste]);
+    }, [user, state, taste, isHome]);
 
     // For One Sauce Info
     const [currentSauce, setCurrentSauce] = useState(null);

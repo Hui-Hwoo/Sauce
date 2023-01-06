@@ -13,10 +13,10 @@ const RestAPI = require("./RestAPI");
 
 exports.api = functions.https.onRequest(RestAPI);
 
-exports.onCreateRecipe = functions.firestore
-    .document("sauce/{recipeId}")
+exports.onCreateSauce = functions.firestore
+    .document("sauce/{sauceId}")
     .onCreate(async (snapshot) => {
-        const countDocRef = firestore.collection("recipeCounts").doc("all");
+        const countDocRef = firestore.collection("sauceCounts").doc("all");
         const countDoc = await countDocRef.get();
 
         if (countDoc.exists) {
@@ -27,11 +27,11 @@ exports.onCreateRecipe = functions.firestore
             countDocRef.set({ count: 1 });
         }
 
-        const recipe = snapshot.data();
+        const sauce = snapshot.data();
 
-        if (recipe.isPublished) {
+        if (sauce.isPublished) {
             const countPublishedDocRef = firestore
-                .collection("recipeCounts")
+                .collection("sauceCounts")
                 .doc("published");
             const countPublishedDoc = await countPublishedDocRef.get();
 
@@ -45,23 +45,23 @@ exports.onCreateRecipe = functions.firestore
         }
     });
 
-exports.onUpdateRecipe = functions.firestore
-    .document("recipes/{recipeId}")
+exports.onUpdateSauce = functions.firestore
+    .document("sauce/{sauceId}")
     .onUpdate(async (changes) => {
-        const oldRecipe = changes.before.data();
-        const newRecipe = changes.after.data();
+        const oldSauce = changes.before.data();
+        const newSauce = changes.after.data();
 
         let publishCount = 0;
 
-        if (!oldRecipe.isPublished && newRecipe.isPublished) {
+        if (!oldSauce.isPublished && newSauce.isPublished) {
             publishCount += 1;
-        } else if (oldRecipe.isPublished && !newRecipe.isPublished) {
+        } else if (oldSauce.isPublished && !newSauce.isPublished) {
             publishCount -= 1;
         }
 
         if (publishCount !== 0) {
             const publishedCountDocRef = firestore
-                .collection("recipeCounts")
+                .collection("sauceCounts")
                 .doc("published");
 
             const publishedCountDoc = await publishedCountDocRef.get();
@@ -80,11 +80,11 @@ exports.onUpdateRecipe = functions.firestore
         }
     });
 
-exports.onDeleteRecipe = functions.firestore
-    .document("recipes/{recipeId}")
+exports.onDeleteSauce = functions.firestore
+    .document("sauce/{sauceId}")
     .onDelete(async (snapshot) => {
-        const recipe = snapshot.data();
-        const imageUrl = recipe.imageUrl;
+        const sauce = snapshot.data();
+        const imageUrl = sauce.imageUrl;
 
         if (imageUrl) {
             const decodedUrl = decodeURIComponent(imageUrl);
@@ -102,7 +102,7 @@ exports.onDeleteRecipe = functions.firestore
                 console.log(`Failed to delete file: ${error.message}`);
             }
 
-            const countDocRef = firestore.collection("recipeCounts").doc("all");
+            const countDocRef = firestore.collection("sauceCounts").doc("all");
             const countDoc = await countDocRef.get();
 
             if (countDoc.exists) {
@@ -113,11 +113,11 @@ exports.onDeleteRecipe = functions.firestore
                 countDocRef.set({ count: 0 });
             }
 
-            const recipe = snapshot.data();
+            const sauce = snapshot.data();
 
-            if (recipe.isPublished) {
+            if (sauce.isPublished) {
                 const countPublishedDocRef = firestore
-                    .collection("recipeCounts")
+                    .collection("sauceCounts")
                     .doc("published");
                 const countPublishedDoc = await countPublishedDocRef.get();
 
@@ -139,14 +139,14 @@ const runtimeOptions = {
     memory: "256MB",
 };
 
-exports.dailyCheckRecipePublishDate = functions
+exports.dailyCheckSaucePublishDate = functions
     .runWith(runtimeOptions)
     .pubsub.schedule("0 0 * * *")
     .onRun(async () => {
-        console.log("dailyCheckRecipePublishDate() called - time to check");
+        console.log("dailyCheckSaucePublishDate() called - time to check");
 
         const snapshot = await firestore
-            .collection("recipes")
+            .collection("sauce")
             .where("isPublished", "==", false)
             .get();
 
@@ -156,9 +156,9 @@ exports.dailyCheckRecipePublishDate = functions
             const isPublished = data.publishDate._seconds <= now ? true : false;
 
             if (isPublished) {
-                console.log(`Recipe: ${data.name} is now published!`);
+                console.log(`Sauce: ${data.name} is now published!`);
 
-                firestore.collection("recipes").doc(doc.id).set(
+                firestore.collection("sauce").doc(doc.id).set(
                     {
                         isPublished,
                     },

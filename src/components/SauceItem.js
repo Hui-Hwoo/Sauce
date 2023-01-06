@@ -34,10 +34,10 @@ const SauceItem = (props) => {
         return dateString;
     };
 
-    // const defaultUrl =
-    //     "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/totoro.gif?alt=media&token=c8448550-2f03-4fd4-8559-c7cdff3fe05a";
-    const defaultUrl2 =
-        "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/sauce3.jpg?alt=media&token=a7dea25e-2ddb-4f93-8b37-76aff357ecae";
+    const defaultUrl =
+        "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/forkD.svg?alt=media&token=6d49ab4f-c294-4ccf-9586-b9d3425b4384";
+    // const defaultUrl2 =
+    //     "https://firebasestorage.googleapis.com/v0/b/recipe-40071.appspot.com/o/sauce3.jpg?alt=media&token=a7dea25e-2ddb-4f93-8b37-76aff357ecae";
 
     return (
         <Card
@@ -46,7 +46,7 @@ const SauceItem = (props) => {
                 editItem();
             }}
         >
-            <Card.Img variant="top" src={sauce?.imageUrl || defaultUrl2} />
+            <Card.Img variant="top" src={sauce?.imageUrl || defaultUrl} />
             <Card.Body>
                 <ProgressBar className="card-progress">
                     {sauce.salty > 0 && (
@@ -93,16 +93,16 @@ const SauceItem = (props) => {
                 </ProgressBar>
 
                 <Card.Title className="cardTitle">
-                    {sauce?.isPublished && (
+                    {sauce.isPublished && (
                         <p>{sauce?.title || "Sauce Title"}</p>
                     )}
-                    {!sauce?.isPublished && (
+                    {!sauce.isPublished && (
                         <OverlayTrigger
                             placement="top"
                             overlay={
                                 <Tooltip className="overlay">
                                     Will be published
-                                    {sauce.publishDate ? " on" : " in future"}
+                                    {sauce.publishDate ? " on" : " in the future"}
                                     {sauce.publishDate && <br />}
                                     {sauce.publishDate && (
                                         <strong>
@@ -114,12 +114,12 @@ const SauceItem = (props) => {
                         >
                             <p
                                 className={
-                                    sauce?.isPublished
+                                    sauce.isPublished
                                         ? "published"
                                         : "unpublished"
                                 }
                             >
-                                {sauce?.title || "Unpublished"}
+                                {sauce.title === "" ? "Unpublished": sauce.title}
                             </p>
                         </OverlayTrigger>
                     )}
